@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Task</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; /* Ensures elements are stacked vertically */
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    #startButton, #wordDisplay, #responseArea, #thankYouMessage {
+      text-align: center;
+      font-size: 2rem;
+      margin: 10px;
+      width: 80%;
+    }
+    #responseArea {
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <button id="startButton">Start</button>
+  <div id="wordDisplay"></div>
+  <textarea id="responseArea" placeholder="Write the words here..." style="display:none;"></textarea>
+  <div id="thankYouMessage" style="display:none;">Thank you!</div>
+
+  <script>
+    const groupAWords = ["sum", "hate", "harm", "wit", "bond", "yield", "worst", "twice"];
+    const groupBWords = ["association", "opportunity", "representative", "organization", "considerable", "immediately", "university", "individual"];
+    let currentWordIndex = 0;
+
+    const group = Math.random() < 0.5 ? "Group A" : "Group B";
+    const words = group === "Group A" ? groupAWords : groupBWords;
+
+    document.getElementById("startButton").addEventListener("click", () => {
+      document.getElementById("startButton").style.display = "none";
+      alert(`You have been assigned to ${group}`);
+      showWords();
+    });
+
+    function showWords() {
+      if (currentWordIndex < words.length) {
+        document.getElementById("wordDisplay").textContent = words[currentWordIndex];
+        currentWordIndex++;
+        setTimeout(showWords, 2000);
+      } else {
+        startWritingPhase();
+      }
+    }
+
+    function startWritingPhase() {
+      document.getElementById("wordDisplay").style.display = "none";
+      const responseArea = document.getElementById("responseArea");
+      responseArea.style.display = "block";
+      responseArea.focus();
+
+      setTimeout(() => {
+        saveResponse();
+        responseArea.style.display = "none";
+        document.getElementById("thankYouMessage").style.display = "block";
+      }, 30000);
+    }
+
+    function saveResponse() {
+      const responseText = document.getElementById("responseArea").value;
+      const uniqueCode = `response_${Date.now()}`;
+
+      const blob = new Blob([`Group: ${group}\nResponse: ${responseText}`], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${uniqueCode}.txt`;
+      a.click();
+    }
+  </script>
+</body>
+</html>
